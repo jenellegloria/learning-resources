@@ -147,6 +147,8 @@ export default function AristotleApp() {
   const [showGuidance, setShowGuidance] = useState({});
   const [argumentStep, setArgumentStep] = useState(0);
   const [started, setStarted] = useState(false);
+  const [reflection, setReflection] = useState("");
+  const [copySuccess, setCopySuccess] = useState(false);
   const inputRef = useRef(null);
   const chainEndRef = useRef(null);
 
@@ -234,6 +236,111 @@ export default function AristotleApp() {
       body: `Aristotle calls this highest good eudaimonia — often translated as "happiness" or "flourishing." But what does that really consist in? That's the question the rest of the Nicomachean Ethics tries to answer.\n\nYour chain is a personal map of this ancient puzzle. The fact that you could trace your reasons from "${chain[0] || "..."}" all the way to "${chain[chain.length - 1] || "..."}" shows that Aristotle's insight isn't just abstract philosophy — it's the structure of how you actually think about what matters.`,
     },
   ];
+
+  const buildClipboardText = () => {
+    const lines = [];
+    lines.push("THE WHY CHAIN — Aristotle's Final End Activity");
+    lines.push("=".repeat(50));
+    lines.push("");
+    lines.push("YOUR WHY CHAIN:");
+    chain.forEach((link, i) => {
+      const q = i === 0 ? "Why are you here?" : `Why "${chain[i - 1]}"?`;
+      const cat = categories[i];
+      const catLabel = cat ? ` [${CATEGORY_INFO[cat].label}]` : "";
+      lines.push(`  ${i + 1}. Q: ${q}`);
+      lines.push(`     A: "${link}"${catLabel}`);
+    });
+    lines.push("");
+    lines.push("VALUE CATEGORIES:");
+    const intrinsics = chain.filter((_, i) => categories[i] === "intrinsic" || categories[i] === "both");
+    const instrumentals = chain.filter((_, i) => categories[i] === "instrumental");
+    if (intrinsics.length > 0) lines.push(`  Intrinsic / Both: ${intrinsics.map((l) => `"${l}"`).join(", ")}`);
+    if (instrumentals.length > 0) lines.push(`  Instrumental: ${instrumentals.map((l) => `"${l}"`).join(", ")}`);
+    if (reflection.trim()) {
+      lines.push("");
+      lines.push("REFLECTION:");
+      lines.push(reflection.trim());
+    }
+    return lines.join("\n");
+  };
+
+  const handleCopy = () => {
+    navigator.clipboard.writeText(buildClipboardText()).then(() => {
+      setCopySuccess(true);
+      setTimeout(() => setCopySuccess(false), 2500);
+    });
+  };
+
+  const handlePrint = () => {
+    const intrinsics = chain.filter((_, i) => categories[i] === "intrinsic" || categories[i] === "both");
+    const instrumentals = chain.filter((_, i) => categories[i] === "instrumental");
+
+    const chainRows = chain
+      .map((link, i) => {
+        const q = i === 0 ? "Why are you here?" : `Why "${chain[i - 1]}"?`;
+        const cat = categories[i];
+        const catInfo = cat ? CATEGORY_INFO[cat] : null;
+        const badge = catInfo
+          ? `<span style="display:inline-block;padding:2px 8px;background:${catInfo.color};color:#fff;font-size:0.7rem;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;border-radius:2px;margin-left:8px;">${catInfo.label}</span>`
+          : "";
+        return `<tr>
+          <td style="padding:8px 12px;color:#888;font-style:italic;font-size:0.9rem;white-space:nowrap;">${q}</td>
+          <td style="padding:8px 12px;font-size:1rem;">"${link}"${badge}</td>
+        </tr>`;
+      })
+      .join("");
+
+    const summaryRows = [
+      intrinsics.length > 0
+        ? `<tr><td style="padding:4px 12px;color:#7BA68A;font-weight:bold;">Intrinsic / Both</td><td style="padding:4px 12px;">${intrinsics.map((l) => `"${l}"`).join(", ")}</td></tr>`
+        : "",
+      instrumentals.length > 0
+        ? `<tr><td style="padding:4px 12px;color:#C4956A;font-weight:bold;">Instrumental</td><td style="padding:4px 12px;">${instrumentals.map((l) => `"${l}"`).join(", ")}</td></tr>`
+        : "",
+    ].join("");
+
+    const reflectionSection = reflection.trim()
+      ? `<section style="margin-top:2rem;">
+          <h2 style="font-size:1.1rem;color:#555;border-bottom:1px solid #ddd;padding-bottom:0.4rem;margin-bottom:0.75rem;">Reflection</h2>
+          <p style="font-size:1rem;line-height:1.7;color:#333;">${reflection.trim().replace(/\n/g, "<br>")}</p>
+        </section>`
+      : "";
+
+    const html = `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Why Chain — Aristotle's Final End</title>
+  <style>
+    body { font-family: Georgia, serif; max-width: 700px; margin: 2rem auto; padding: 0 1.5rem; color: #222; }
+    h1 { font-size: 1.6rem; font-weight: normal; margin-bottom: 0.25rem; }
+    .subtitle { color: #777; font-size: 0.9rem; margin-bottom: 2rem; font-style: italic; }
+    table { width: 100%; border-collapse: collapse; margin-bottom: 1.5rem; }
+    tr:nth-child(even) { background: #f9f7f4; }
+    @media print { body { margin: 1rem auto; } }
+  </style>
+</head>
+<body>
+  <h1>The Why Chain</h1>
+  <div class="subtitle">Aristotle's Final End Activity</div>
+  <section>
+    <h2 style="font-size:1.1rem;color:#555;border-bottom:1px solid #ddd;padding-bottom:0.4rem;margin-bottom:0.75rem;">Why Chain</h2>
+    <table>${chainRows}</table>
+  </section>
+  <section>
+    <h2 style="font-size:1.1rem;color:#555;border-bottom:1px solid #ddd;padding-bottom:0.4rem;margin-bottom:0.75rem;">Value Summary</h2>
+    <table>${summaryRows}</table>
+  </section>
+  ${reflectionSection}
+</body>
+</html>`;
+
+    const win = window.open("", "_blank");
+    win.document.write(html);
+    win.document.close();
+    win.focus();
+    setTimeout(() => win.print(), 400);
+  };
 
   // --- INTRO SCREEN ---
   if (!started) {
@@ -535,6 +642,34 @@ export default function AristotleApp() {
                   </p>
                   <p style={styles.attribution}>— Nicomachean Ethics I.2 (1094a18-22)</p>
                 </div>
+                {/* Reflection box */}
+                <div style={styles.reflectionSection}>
+                  <h3 style={styles.reflectionTitle}>Your Reflection</h3>
+                  <p style={styles.reflectionPrompt}>
+                    Your chain ended at <em>"{chain[chain.length - 1]}"</em>. Does that feel like your actual chief good — the thing you genuinely live toward? Or when you sit with it, does something else come to mind? Do you have a final end at all, or does life feel more scattered across many competing goods? Take a moment to reflect honestly.
+                  </p>
+                  <textarea
+                    style={styles.reflectionTextarea}
+                    value={reflection}
+                    onChange={(e) => setReflection(e.target.value)}
+                    placeholder="Write your reflection here…"
+                    rows={5}
+                  />
+                </div>
+
+                {/* Export buttons */}
+                <div style={styles.exportRow}>
+                  <button style={styles.exportBtn} onClick={handlePrint}>
+                    Print / Save as PDF
+                  </button>
+                  <button
+                    style={{ ...styles.exportBtn, ...styles.copyBtn }}
+                    onClick={handleCopy}
+                  >
+                    {copySuccess ? "Copied!" : "Copy Results"}
+                  </button>
+                </div>
+
                 <button
                   style={styles.restartBtn}
                   onClick={() => {
@@ -544,6 +679,7 @@ export default function AristotleApp() {
                     setCurrentCatIndex(0);
                     setShowGuidance({});
                     setArgumentStep(0);
+                    setReflection("");
                   }}
                 >
                   Start Over With a New Chain
@@ -933,5 +1069,60 @@ const styles = {
     fontSize: "0.9rem",
     fontFamily: "'Crimson Text', serif",
     cursor: "pointer",
+  },
+  reflectionSection: {
+    margin: "2.5rem 0 1.5rem",
+    padding: "1.5rem",
+    background: "rgba(123,166,138,0.06)",
+    border: "1px solid rgba(123,166,138,0.2)",
+  },
+  reflectionTitle: {
+    fontSize: "1.15rem",
+    fontWeight: 400,
+    color: "#7BA68A",
+    marginBottom: "0.75rem",
+    letterSpacing: "0.04em",
+  },
+  reflectionPrompt: {
+    fontSize: "1rem",
+    color: "rgba(232,221,208,0.7)",
+    lineHeight: 1.75,
+    marginBottom: "1rem",
+    fontStyle: "italic",
+  },
+  reflectionTextarea: {
+    width: "100%",
+    padding: "0.85rem 1rem",
+    background: "rgba(232,221,208,0.05)",
+    border: "1px solid rgba(123,166,138,0.25)",
+    color: "#E8DDD0",
+    fontSize: "1rem",
+    fontFamily: "'Crimson Text', serif",
+    lineHeight: 1.7,
+    outline: "none",
+    resize: "vertical",
+    boxSizing: "border-box",
+  },
+  exportRow: {
+    display: "flex",
+    gap: "0.75rem",
+    justifyContent: "center",
+    flexWrap: "wrap",
+    margin: "1.5rem 0 0.5rem",
+  },
+  exportBtn: {
+    padding: "0.65rem 1.6rem",
+    background: "transparent",
+    border: "1px solid rgba(196,149,106,0.5)",
+    color: "#C4956A",
+    fontSize: "0.95rem",
+    fontFamily: "'Crimson Text', serif",
+    cursor: "pointer",
+    letterSpacing: "0.04em",
+    transition: "all 0.2s ease",
+  },
+  copyBtn: {
+    borderColor: "rgba(139,158,194,0.5)",
+    color: "#8B9EC2",
   },
 };
