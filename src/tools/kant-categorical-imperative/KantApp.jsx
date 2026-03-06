@@ -143,7 +143,7 @@ function KantBackground() {
 // ─── Nav Sidebar ───
 function NavSidebar({ current, onNav }) {
   return (
-    <nav style={{
+    <nav className="kant-sidebar" style={{
       position: "fixed", left: 0, top: 0, bottom: 0, width: 260, zIndex: 100,
       background: "rgba(10,10,18,0.95)", borderRight: "1px solid rgba(200,180,140,0.12)",
       display: "flex", flexDirection: "column", padding: "32px 0",
@@ -194,7 +194,7 @@ function NavSidebar({ current, onNav }) {
 // ─── Section Wrapper ───
 function Section({ children }) {
   return (
-    <div style={{
+    <div className="kant-section" style={{
       marginLeft: 260, position: "relative", zIndex: 10,
       minHeight: "100vh", padding: "60px 80px 80px",
       maxWidth: 1100, boxSizing: "border-box",
@@ -276,7 +276,7 @@ function IntroSection() {
           Not "do this <em>if</em> you want happiness" (that would be hypothetical), but "do this, <em>period</em>."
         </p>
       </Prose>
-      <div style={{
+      <div className="kant-flex-wrap" style={{
         opacity: reveal >= 3 ? 1 : 0, transition: "opacity 1s ease 0.8s",
         marginTop: 48, display: "flex", gap: 24,
       }}>
@@ -334,7 +334,7 @@ function GoodWillSection() {
           Click each motivation below:
         </p>
       </Prose>
-      <div style={{ marginTop: 36, display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, maxWidth: 640 }}>
+      <div className="kant-2col" style={{ marginTop: 36, display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, maxWidth: 640 }}>
         {motives.map(m => (
           <button key={m.id} onClick={() => setSelected(m.id)} style={{
             background: selected === m.id
@@ -854,7 +854,6 @@ function PracticeSection() {
   const [currentMaxim, setCurrentMaxim] = useState(0);
   const [responses, setResponses] = useState({});
   const [showHint, setShowHint] = useState({});
-  const [submitted, setSubmitted] = useState({});
 
   const pm = PRACTICE_MAXIMS[currentMaxim];
 
@@ -884,7 +883,7 @@ function PracticeSection() {
       </Prose>
 
       {/* Maxim selector */}
-      <div style={{ display: "flex", gap: 10, marginTop: 32, marginBottom: 32 }}>
+      <div style={{ display: "flex", gap: 10, flexWrap: "wrap", marginTop: 32, marginBottom: 32 }}>
         {PRACTICE_MAXIMS.map((m, i) => (
           <button key={i} onClick={() => setCurrentMaxim(i)} style={{
             padding: "10px 18px", borderRadius: 8, cursor: "pointer",
@@ -954,37 +953,16 @@ function PracticeSection() {
         ))}
       </div>
 
-      {!submitted[currentMaxim] ? (
-        <button
-          onClick={() => setSubmitted(prev => ({ ...prev, [currentMaxim]: true }))}
-          disabled={!responses[currentMaxim]?.verdict}
-          style={{
-            marginTop: 24, padding: "12px 32px", borderRadius: 10, cursor: "pointer",
-            fontFamily: "'Cormorant Garamond', serif", fontSize: 16,
-            background: responses[currentMaxim]?.verdict ? "rgba(200,180,140,0.12)" : "rgba(40,40,55,0.3)",
-            border: `1px solid ${responses[currentMaxim]?.verdict ? "rgba(200,180,140,0.25)" : "rgba(200,180,140,0.06)"}`,
-            color: responses[currentMaxim]?.verdict ? "#c8b48c" : "#4a4a5a",
-          }}>Submit Analysis</button>
-      ) : (
-        <div style={{
-          marginTop: 24, padding: "20px 24px", borderRadius: 12,
-          background: "rgba(140,180,100,0.06)", border: "1px solid rgba(140,180,100,0.15)",
-          maxWidth: 640,
-        }}>
-          <div style={{
-            fontFamily: "'Cormorant Garamond', serif", fontSize: 17, color: "#a8c878",
-            fontWeight: 500, marginBottom: 8,
-          }}>✓ Analysis submitted</div>
-          <div style={{
-            fontFamily: "'Source Serif 4', serif", fontSize: 14, color: "#8a9a6a",
-            lineHeight: 1.7,
-          }}>
-            Share your responses with the class or your instructor for discussion.
-            There can be genuine philosophical debate about how to apply these formulations —
-            that's part of what makes Kant so rich.
-          </div>
-        </div>
-      )}
+      <button
+        onClick={() => window.print()}
+        disabled={!responses[currentMaxim]?.verdict}
+        style={{
+          marginTop: 24, padding: "12px 32px", borderRadius: 10, cursor: "pointer",
+          fontFamily: "'Cormorant Garamond', serif", fontSize: 16,
+          background: responses[currentMaxim]?.verdict ? "rgba(200,180,140,0.12)" : "rgba(40,40,55,0.3)",
+          border: `1px solid ${responses[currentMaxim]?.verdict ? "rgba(200,180,140,0.25)" : "rgba(200,180,140,0.06)"}`,
+          color: responses[currentMaxim]?.verdict ? "#c8b48c" : "#4a4a5a",
+        }}>Print / Save Analysis</button>
     </Section>
   );
 }
@@ -1008,12 +986,21 @@ export default function KantApp() {
   return (
     <>
       <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,400&family=IBM+Plex+Mono:wght@400;500;600&family=Source+Serif+4:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet" />
+      <style>{`
+        @media (max-width: 680px) {
+          .kant-sidebar { display: none !important; }
+          .kant-section { margin-left: 0 !important; padding: 28px 20px 80px !important; }
+          .kant-bottom-nav { margin-left: 0 !important; padding: 0 20px 40px !important; }
+          .kant-2col { grid-template-columns: 1fr !important; }
+          .kant-flex-wrap { flex-wrap: wrap !important; }
+        }
+      `}</style>
       <div style={{ minHeight: "100vh", background: "#0a0a0f", position: "relative" }}>
         <KantBackground />
         <NavSidebar current={section} onNav={setSection} />
         {renderSection()}
         {/* Bottom nav */}
-        <div style={{
+        <div className="kant-bottom-nav" style={{
           marginLeft: 260, padding: "0 80px 48px", position: "relative", zIndex: 10,
           display: "flex", justifyContent: "space-between", maxWidth: 1100,
         }}>
