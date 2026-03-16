@@ -46,6 +46,15 @@ const tools = [
     tags: ["Virtue Ethics", "Aristotle", "Eudaimonia"],
     accent: "#3a7a6a",
   },
+  {
+    id: "care-ethics-nursing",
+    title: "Care Ethics in Nursing",
+    subtitle: "Reflections on Applying Care Ethics to Nursing Scenarios",
+    description:
+      "Learn about Nel Noddings' Care Ethics framework for moral theorizing by reflecting on how to apply it to various scenarios."
+    tags: ["Noddings", "Ethics of Care", "Nursing"],
+    accent: "#a78ed5"
+  }
 ];
 
 export default function App() {
