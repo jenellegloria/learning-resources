@@ -7,6 +7,7 @@ import UtilityCalculator from "./tools/utility-calculator/utility-calculator-pla
 import GoldenMeanActivity from "./tools/aristotle-golden-mean/golden-mean-activity";
 import TrolleyProblemLab from "./tools/trolley-problem/trolley-problem-lab";
 import AristotleApp from "./tools/aristotle-final-end/aristotle-final-end";
+import CareEthicsNursing from "./tools/care-ethics-nursing/care-ethics-nursing";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
@@ -18,6 +19,7 @@ ReactDOM.createRoot(document.getElementById("root")).render(
         <Route path="/aristotle-golden-mean" element={<GoldenMeanActivity />} />
         <Route path="/trolley-problem" element={<TrolleyProblemLab />} />
         <Route path="/aristotle-final-end" element={<AristotleApp />} />
+        <Route path="/care-ethics-nursing" element={<CareEthicsNursing />} />
       </Routes>
     </HashRouter>
   </React.StrictMode>
