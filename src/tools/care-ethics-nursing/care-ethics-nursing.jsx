@@ -1,20 +1,21 @@
-import { useEffect, useState } from "react";
-import htmlContent from "./care-ethics-nursing.html?raw";
+import { useEffect, useRef } from "react";
+import rawHtml from "./care-ethics-nursing.html?raw";
 
 export default function CareEthicsNursing() {
-  const [src, setSrc] = useState("");
+  const iframeRef = useRef(null);
 
   useEffect(() => {
-    const blob = new Blob([htmlContent], { type: "text/html" });
-    const url = URL.createObjectURL(blob);
-    setSrc(url);
-    return () => URL.revokeObjectURL(url);
+    const iframe = iframeRef.current;
+    if (!iframe) return;
+    const doc = iframe.contentDocument || iframe.contentWindow.document;
+    doc.open();
+    doc.write(rawHtml);
+    doc.close();
   }, []);
 
-  if (!src) return null;
   return (
     <iframe
-      src={src}
+      ref={iframeRef}
       style={{ width: "100%", height: "100vh", border: "none", display: "block" }}
       title="Care Ethics in Nursing"
     />
