@@ -1207,10 +1207,6 @@ textarea#msg-input::placeholder { color: var(--mid); }
 <div class="toast" id="toast"></div>
 
 <script>
-// ════════════════════════════════════════════
-// CONFIG — replace with your key
-// ════════════════════════════════════════════
-const API_KEY = "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";
 
 // ════════════════════════════════════════════
 // SCENARIOS
@@ -1503,14 +1499,9 @@ IMPORTANT JUDGMENT CALLS:
 - Speak warmly, in second person, briefly. Maximum 4 sentences per response.`;
 
   try {
-    const res = await fetch('https://api.anthropic.com/v1/messages', {
+    const res = await fetch('/api/chat', {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-api-key': API_KEY,
-        'anthropic-version': '2023-06-01',
-        'anthropic-dangerous-direct-browser-access': 'true'
-      },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         model: 'claude-sonnet-4-20250514',
         max_tokens: 1000,
