@@ -6,7 +6,7 @@ const tools = [
     title: "Kant's Categorical Imperative",
     subtitle: "Universal Law & Humanity Formulations",
     description:
-      "Interactive walkthrough of Kant's moral philosophy — from Good Will through both formulations of the Categorical Imperative, with visual illustrations and guided student exercises.",
+      "Walkthrough Kant's moral philosophy, from the Good Will through two formulations of the Categorical Imperative.",
     tags: ["Deontology", "Kant", "Ethics"],
     accent: "#b07d4a",
   },
@@ -15,7 +15,7 @@ const tools = [
     title: "Utility Calculator",
     subtitle: "Bentham, Mill & Preference Utilitarianism",
     description:
-      "Apply the utilitarian calculus to any moral situation. Enter options and consequences, rate them across four of Bentham's dimensions, and compare how Bentham, Mill, and Preference Utilitarianism score each outcome.",
+      "Apply the utilitarian calculus to any moral situation. Compare between Betham, Mill, and Preference Utilitarianism.",
     tags: ["Utilitarianism", "Consequentialism", "Ethics"],
     accent: "#3a6ea8",
   },
@@ -24,7 +24,7 @@ const tools = [
     title: "Aristotle's Golden Mean",
     subtitle: "Virtue Ethics & the Doctrine of the Mean",
     description:
-      "Guided activity for exploring Aristotle's virtue ethics — identify virtues as the mean between extremes of excess and deficiency, and practice locating the golden mean in real situations.",
+      "Guided activity for exploring Aristotle's virtue ethics, particularly the idea of virtues as the mean between extremes of excess and deficiency.",
     tags: ["Virtue Ethics", "Aristotle", "Character"],
     accent: "#4a8a5a",
   },
@@ -33,7 +33,7 @@ const tools = [
     title: "The Trolley Problem",
     subtitle: "Consequentialism vs. Deontology",
     description:
-      "Work through classic and variant trolley scenarios to reveal the tension between consequentialist and deontological reasoning. Compare your intuitions against philosophical frameworks and real survey data.",
+      "Work through classic and variant trolley scenarios. Where do your intuitions align with consequentialist vs. deontological ethics? ",
     tags: ["Consequentialism", "Deontology", "Thought Experiments"],
     accent: "#a03a3a",
   },
@@ -42,7 +42,7 @@ const tools = [
     title: "Aristotle's Final End",
     subtitle: "Telos, Eudaimonia & the Why Chain",
     description:
-      "Follow the 'why chain' from everyday goals up to the final end. Categorize values as instrumental, intrinsic, or both, and explore Aristotle's argument that all human action aims ultimately at eudaimonia.",
+      "Why are you here on this learning resource webpage? Follow a chain from that question to (maybe) the meaning of human life",
     tags: ["Virtue Ethics", "Aristotle", "Eudaimonia"],
     accent: "#3a7a6a",
   },
